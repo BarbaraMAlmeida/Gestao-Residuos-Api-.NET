@@ -1,4 +1,5 @@
 ﻿using GestaoResiduosApi.Data.Repository;
+using GestaoResiduosApi.Enums;
 using GestaoResiduosApi.Models;
 using GestaoResiduosApi.ViewModels;
 namespace GestaoResiduosApi.Services
@@ -26,16 +27,47 @@ namespace GestaoResiduosApi.Services
             });
         }
 
+        public async Task<IEnumerable<AgendamentoExibicaoViewModel>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            var agendamentos = await _agendamentoRepository.GetPagedAsync(pageNumber, pageSize);
+            return agendamentos.Select(a => new AgendamentoExibicaoViewModel
+            {
+                IdAgendamento = a.IdAgendamento,
+                DtAgendamento = a.DtAgendamento,
+                StatusAgendamento = a.StatusAgendamento,
+                RotaId = a.Rota.IdRota
+            });
+        }
+
         public async Task<AgendamentoExibicaoViewModel> CreateAsync(AgendamentoCadastroViewModel model)
         {
-            var rota = await _rotaRepository.GetByIdAsync(model.RotaId);
-            if (rota == null) throw new KeyNotFoundException("Rota não encontrada.");
+            var errors = new List<string>();
 
+            // Validar rota
+            var rota = await _rotaRepository.GetByIdAsync(model.RotaId);
+            if (rota == null)
+            {
+                errors.Add($"Rota com ID {model.RotaId} não foi encontrada.");
+            }
+
+            // Validar data
+            if (model.DtAgendamento < DateTime.Now)
+            {
+                errors.Add("A data de agendamento deve ser uma data futura.");
+            }
+
+            // Lançar exceção com todos os erros
+            if (errors.Any())
+            {
+                throw new ArgumentException(string.Join(" | ", errors));
+            }
+
+            // Criação do agendamento
             var agendamento = new AgendamentoModel
             {
                 DtAgendamento = model.DtAgendamento,
                 StatusAgendamento = model.StatusAgendamento,
-                Rota = rota
+                Rota = rota!
             };
 
             var savedAgendamento = await _agendamentoRepository.AddAsync(agendamento);

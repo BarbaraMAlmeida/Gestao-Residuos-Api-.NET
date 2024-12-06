@@ -1,9 +1,11 @@
-﻿using GestaoResiduosApi.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using GestaoResiduosApi.Enums;
 
 namespace GestaoResiduosApi.ViewModels
 {
     public class EmergenciaExibicaoViewModel
     {
+
         public DateTime DtEmergencia { get; set; }
         public StatusEmergencia Status { get; set; }
         public string Descricao { get; set; }

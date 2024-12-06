@@ -5,15 +5,15 @@ namespace GestaoResiduosApi.ViewModels
 {
     public class EmergenciaCadastroViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "A Data é obrigatória.")]
         public DateTime DtEmergencia { get; set; }
-        [Required]
+        [Required(ErrorMessage = "O Status é obrigatório.")]
         public StatusEmergencia Status { get; set; }
-        [Required]
-        public string Descricao { get; set; }
-        [Required]
+        [Required(ErrorMessage = "A descricao é obrigatória.")]
+        public string? Descricao { get; set; }
+        [Required(ErrorMessage = "idRecipiente obrigatório.")]
         public long RecipienteId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "idCaminhao obrigatório.")]
         public long CaminhaoId { get; set; }
     }
 }

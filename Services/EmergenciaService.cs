@@ -1,6 +1,8 @@
 ﻿using GestaoResiduosApi.Data.Repository;
+using GestaoResiduosApi.Enums;
 using GestaoResiduosApi.Models;
 using GestaoResiduosApi.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestaoResiduosApi.Services
 {
@@ -28,6 +30,16 @@ namespace GestaoResiduosApi.Services
 
         public async Task<EmergenciaExibicaoViewModel> AddAsync(EmergenciaCadastroViewModel model)
         {
+            if (model.DtEmergencia == DateTime.MinValue)
+            {
+                throw new InvalidOperationException("A data da emergência não pode ser nula ou inválida.");
+            }
+
+            if (!Enum.IsDefined(typeof(StatusEmergencia), model.Status))
+            {
+                throw new InvalidOperationException("O status da emergência é inválido.");
+            }
+
             var recipiente = await _repository.GetRecipienteByIdAsync(model.RecipienteId);
             if (recipiente == null)
                 throw new KeyNotFoundException("Recipiente não encontrado.");
@@ -55,6 +67,22 @@ namespace GestaoResiduosApi.Services
                 RecipienteId = savedEmergencia.Recipiente.IdRecipiente,
                 CaminhaoId = savedEmergencia.Caminhao.IdCaminhao
             };
+
+        }
+
+
+
+        public async Task<IEnumerable<EmergenciaExibicaoViewModel>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            var emergencia = await _repository.GetPagedAsync(pageNumber, pageSize);
+            return emergencia.Select(a => new EmergenciaExibicaoViewModel
+            {
+                DtEmergencia = a.DtEmergencia,
+                Status = a.Status,
+                Descricao = a.Descricao,
+                RecipienteId = a.Recipiente?.IdRecipiente ?? 0,
+                CaminhaoId = a.Caminhao?.IdCaminhao ?? 0
+            });
         }
     }
 }

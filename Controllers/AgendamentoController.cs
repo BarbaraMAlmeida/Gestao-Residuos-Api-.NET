@@ -1,18 +1,18 @@
 ﻿using GestaoResiduosApi.Services;
 using GestaoResiduosApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GestaoResiduosApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class RotaController: ControllerBase
+    public class AgendamentosController : ControllerBase
     {
-        private readonly IRotaService _service;
+        private readonly IAgendamentoService _service;
 
-        public RotaController(IRotaService service)
+        public AgendamentosController(IAgendamentoService service)
         {
             _service = service;
         }
@@ -27,20 +27,20 @@ namespace GestaoResiduosApi.Controllers
                 return BadRequest("Número da página e tamanho da página devem ser maiores que zero.");
             }
 
-            var rotas = await _service.GetPagedAsync(pageNumber, pageSize);
+            var agendamentos = await _service.GetPagedAsync(pageNumber, pageSize);
 
-            if (!rotas.Any())
+            if (!agendamentos.Any())
             {
                 return NoContent();
             }
 
-            return Ok(rotas);
+            return Ok(agendamentos);
         }
 
         // POST: Cadastro de agendamento
         [Authorize(Policy = "AdminPolicy")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RotaCadastroViewModel model)
+        public async Task<IActionResult> Create([FromBody] AgendamentoCadastroViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace GestaoResiduosApi.Controllers
             try
             {
                 var result = await _service.CreateAsync(model);
-                return CreatedAtAction(nameof(GetAll), new { id = result.IdRota }, result);
+                return CreatedAtAction(nameof(GetAll), new { id = result.IdAgendamento }, result);
             }
             catch (ArgumentException ex)
             {
@@ -74,6 +74,49 @@ namespace GestaoResiduosApi.Controllers
                     Error = "Ocorreu um erro inesperado ao processar sua solicitação."
                 });
             }
+        }
+
+        // PUT: Atualização de agendamento
+        [Authorize(Policy = "AdminPolicy")]
+        [HttpPut("{id:long}")]
+        public async Task<IActionResult> Update(long id, [FromBody] AgendamentoCadastroViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    Errors = ModelState
+                        .Where(ms => ms.Value.Errors.Any())
+                        .ToDictionary(
+                            ms => ms.Key,
+                            ms => ms.Value.Errors.Select(e => e.ErrorMessage)
+                        )
+                });
+            }
+
+            try
+            {
+                var result = await _service.UpdateAsync(model, id);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Error = ex.Message });
+            }
+        }
+
+        // DELETE: Exclusão de agendamento
+        [Authorize(Policy = "AdminPolicy")]
+        [HttpDelete("{id:long}")]
+        public async Task<IActionResult> Delete(long id)
+        {
+            var success = await _service.DeleteAsync(id);
+            if (!success)
+            {
+                return NotFound(new { Error = "Agendamento não encontrado." });
+            }
+
+            return NoContent();
         }
     }
 }

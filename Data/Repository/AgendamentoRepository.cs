@@ -35,9 +35,10 @@ namespace GestaoResiduosApi.Data.Repository
 
         public async Task<AgendamentoModel> GetByIdAsync(long id)
         {
+            Console.WriteLine("ID:" + id);
             return await _context.Agendamento
                 .Include(a => a.Rota)
-                .FirstOrDefaultAsync(a => a.IdAgendamento == id);
+                .FirstOrDefaultAsync(a => a.Rota.IdRota == id);
         }
 
         public async Task<bool> DeleteByIdAsync(long id)
@@ -48,6 +49,16 @@ namespace GestaoResiduosApi.Data.Repository
             _context.Agendamento.Remove(agendamento);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<AgendamentoModel>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            return await _context.Agendamento
+                .Include(e => e.Rota) // Carrega Rota
+                .OrderBy(e => e.IdAgendamento)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
     }
 }

@@ -6,5 +6,6 @@ namespace GestaoResiduosApi.Services
     {
         Task<IEnumerable<EmergenciaExibicaoViewModel>> GetAllAsync();
         Task<EmergenciaExibicaoViewModel> AddAsync(EmergenciaCadastroViewModel model);
+        Task<IEnumerable<EmergenciaExibicaoViewModel>> GetPagedAsync(int pageNumber, int pageSize);
     }
 }

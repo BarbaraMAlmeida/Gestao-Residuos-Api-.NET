@@ -9,5 +9,6 @@ namespace GestaoResiduosApi.Data.Repository
         Task<AgendamentoModel> UpdateAsync(AgendamentoModel agendamento);
         Task<AgendamentoModel> GetByIdAsync(long id);
         Task<bool> DeleteByIdAsync(long id);
+        Task<IEnumerable<AgendamentoModel>> GetPagedAsync(int pageNumber, int pageSize);
     }
 }

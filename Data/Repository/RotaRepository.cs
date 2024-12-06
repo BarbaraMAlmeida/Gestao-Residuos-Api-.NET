@@ -12,6 +12,14 @@ namespace GestaoResiduosApi.Data.Repository
             _context = context;
         }
 
+        public async Task<IEnumerable<RotaModel>> GetAllAsync()
+        {
+            return await _context.Rota
+                .Include(a => a.Recipiente)
+                .Include(a => a.Caminhao)
+                .ToListAsync();
+        }
+
         public async Task<RotaModel> AddAsync(RotaModel rota)
         {
             var entity = await _context.Rota.AddAsync(rota);
@@ -19,24 +27,26 @@ namespace GestaoResiduosApi.Data.Repository
             return entity.Entity;
         }
 
-        public async Task<RotaModel?> GetByIdAsync(long id) // Implementação do método
+        public async Task<RotaModel> GetByIdAsync(long id)
         {
-            return await _context.Rota.FirstOrDefaultAsync(r => r.IdRota == id);
+            Console.WriteLine("ID:" + id);
+            return await _context.Rota
+                .Include(a => a.Recipiente)
+                .Include(a => a.Caminhao)
+                .FirstOrDefaultAsync(a => a.IdRota == id);
         }
 
-        public async Task<bool> ExistsByIdAsync(long id)
+
+        public async Task<IEnumerable<RotaModel>> GetPagedAsync(int pageNumber, int pageSize)
         {
-            return await _context.Rota.AnyAsync(r => r.IdRota == id);
+            return await _context.Rota
+                .Include(e => e.Recipiente) // Carrega Recipiente
+                .Include(e => e.Caminhao)   // Carrega Caminhão
+                .OrderBy(e => e.IdRota)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
-        public async Task DeleteByIdAsync(long id)
-        {
-            var rota = await _context.Rota.FirstOrDefaultAsync(r => r.IdRota == id);
-            if (rota != null)
-            {
-                _context.Rota.Remove(rota);
-                await _context.SaveChangesAsync();
-            }
-        }
     }
 }

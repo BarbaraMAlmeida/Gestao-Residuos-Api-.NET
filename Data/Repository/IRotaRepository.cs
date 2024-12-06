@@ -4,9 +4,9 @@ namespace GestaoResiduosApi.Data.Repository
 {
     public interface IRotaRepository
     {
+        Task<IEnumerable<RotaModel>> GetAllAsync();
         Task<RotaModel> AddAsync(RotaModel rota);
-        Task<RotaModel?> GetByIdAsync(long id); // Adicionado
-        Task<bool> ExistsByIdAsync(long id);
-        Task DeleteByIdAsync(long id);
+        Task<RotaModel> GetByIdAsync(long id);
+        Task<IEnumerable<RotaModel>> GetPagedAsync(int pageNumber, int pageSize);
     }
 }

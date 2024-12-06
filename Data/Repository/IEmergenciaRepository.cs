@@ -8,5 +8,6 @@ namespace GestaoResiduosApi.Data.Repository
         Task<EmergenciaModel> AddAsync(EmergenciaModel emergencia);
         Task<RecipienteModel> GetRecipienteByIdAsync(long id);
         Task<CaminhaoModel> GetCaminhaoByIdAsync(long id);
+        Task<IEnumerable<EmergenciaModel>> GetPagedAsync(int pageNumber, int pageSize);
     }
 }

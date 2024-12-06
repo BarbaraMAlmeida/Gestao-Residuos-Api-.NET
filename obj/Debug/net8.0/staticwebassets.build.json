@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "dISLjDCbmgDJ5zzBjOAhg08B+w44JsJ9DY0nlHutY4w=",
+  "Hash": "C4VMx9YpQ3zOa4h4wiQmjtVofvuY33+QGCO120sX8ik=",
   "Source": "GestaoResiduosApi",
   "BasePath": "_content/GestaoResiduosApi",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }

@@ -3,7 +3,8 @@ namespace GestaoResiduosApi.Services
 {
     public interface IRotaService
     {
-        Task<RotaExibicaoViewModel> CriarRotaAsync(RotaCadastroViewModel model);
-        Task DeletarRotaAsync(long id);
+        Task<IEnumerable<RotaExibicaoViewModel>> GetAllAsync();
+        Task<IEnumerable<RotaExibicaoViewModel>> GetPagedAsync(int pageNumber, int pageSize);
+        Task<RotaExibicaoViewModel> CreateAsync(RotaCadastroViewModel model);
     }
 }

@@ -17,42 +17,75 @@ namespace GestaoResiduosApi.Services
                 _recipienteRepository = recipienteRepository;
             }
 
-            public async Task<RotaExibicaoViewModel> CriarRotaAsync(RotaCadastroViewModel model)
+        public async Task<IEnumerable<RotaExibicaoViewModel>> GetAllAsync()
+        {
+            var rotas = await _rotaRepository.GetAllAsync();
+            return rotas.Select(a => new RotaExibicaoViewModel
             {
-                var recipiente = await _recipienteRepository.GetByIdAsync(model.RecipienteId);
-                if (recipiente == null)
-                    throw new KeyNotFoundException("Recipiente não encontrado.");
-
-                var caminhao = await _caminhaoRepository.GetByIdAsync(model.CaminhaoId);
-                if (caminhao == null)
-                    throw new KeyNotFoundException("Caminhão não encontrado.");
-
-                var rota = new RotaModel
-                {
-                    DtRota = model.DtRota,
-                    Recipiente = recipiente,
-                    Caminhao = caminhao
-                };
-
-                var rotaCriada = await _rotaRepository.AddAsync(rota);
-
-                return new RotaExibicaoViewModel
-                {
-                    IdRota = rotaCriada.IdRota,
-                    DtRota = rotaCriada.DtRota,
-                    RecipienteId = rotaCriada.Recipiente.IdRecipiente,
-                    CaminhaoId = rotaCriada.Caminhao.IdCaminhao
-                };
-            }
-
-            public async Task DeletarRotaAsync(long id)
-            {
-                var exists = await _rotaRepository.ExistsByIdAsync(id);
-                if (!exists)
-                    throw new KeyNotFoundException("Rota não encontrada.");
-
-                await _rotaRepository.DeleteByIdAsync(id);
-            }
+                DtRota = a.DtRota,
+                RecipienteId = a.Recipiente.IdRecipiente,
+                CaminhaoId = a.Caminhao.IdCaminhao
+            });
         }
+
+        public async Task<IEnumerable<RotaExibicaoViewModel>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            var rotas = await _rotaRepository.GetPagedAsync(pageNumber, pageSize);
+            return rotas.Select(a => new RotaExibicaoViewModel
+            {
+                DtRota = a.DtRota,
+                RecipienteId = a.Recipiente?.IdRecipiente??0,
+                CaminhaoId = a.Caminhao?.IdCaminhao??0
+            });
+        }
+
+        public async Task<RotaExibicaoViewModel> CreateAsync(RotaCadastroViewModel model)
+        {
+            var errors = new List<string>();
+
+            // Validar rota
+            var caminhao = await _caminhaoRepository.GetByIdAsync(model.CaminhaoId);
+            if (caminhao == null)
+            {
+                errors.Add($"Caminhão com ID {model.CaminhaoId} não foi encontrado.");
+            }
+
+          
+            var recipiente = await _recipienteRepository.GetByIdAsync(model.RecipienteId);
+            if (recipiente == null)
+            {
+                errors.Add($"Recipiente com ID {model.RecipienteId} não foi encontrado.");
+            }
+
+            // Validar data
+            if (model.DtRota < DateTime.Now)
+            {
+                errors.Add("A data da Rota deve ser uma data futura.");
+            }
+
+            // Lançar exceção com todos os erros
+            if (errors.Any())
+            {
+                throw new ArgumentException(string.Join(" | ", errors));
+            }
+
+            // Criação do agendamento
+            var rota = new RotaModel
+            {
+                DtRota = model.DtRota,
+                Recipiente = recipiente,
+                Caminhao = caminhao
+            };
+
+            var savedRota = await _rotaRepository.AddAsync(rota);
+
+            return new RotaExibicaoViewModel
+            {
+               DtRota = savedRota.DtRota,
+                RecipienteId = savedRota.Recipiente.IdRecipiente,
+                CaminhaoId = savedRota.Caminhao.IdCaminhao
+            };
+        }
+      }
     }
   
