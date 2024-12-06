@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestaoResiduosApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79a64e46cfc43b675f639885a5634b82492c8e92")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestaoResiduosApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestaoResiduosApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

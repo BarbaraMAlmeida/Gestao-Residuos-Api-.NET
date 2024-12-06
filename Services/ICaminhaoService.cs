@@ -5,6 +5,7 @@ namespace GestaoResiduosApi.Services
     public interface ICaminhaoService
     {
         Task<IEnumerable<CaminhaoExibicaoViewModel>> GetAllAsync();
-        Task<CaminhaoExibicaoViewModel> AddAsync(CaminhaoCadastroViewModel model);
+        Task AddAsync(CaminhaoCadastroViewModel viewModel);
+        Task<IEnumerable<CaminhaoExibicaoViewModel>> GetPagedAsync(int pageNumber, int pageSize);
     }
 }

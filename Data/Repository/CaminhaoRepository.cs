@@ -17,16 +17,30 @@ namespace GestaoResiduosApi.Data.Repository
             return await _context.Caminhoes.ToListAsync();
         }
 
-        public async Task<CaminhaoModel> AddAsync(CaminhaoModel caminhao)
+        public async Task<CaminhaoModel?> GetByIdAsync(long id)
         {
-            var entity = await _context.Caminhoes.AddAsync(caminhao);
-            await _context.SaveChangesAsync();
-            return entity.Entity;
+            return await _context.Caminhoes.FindAsync(id);
         }
 
-        public async Task<CaminhaoModel?> GetByIdAsync(long id) // Implementação
+        public async Task AddAsync(CaminhaoModel caminhao)
         {
-            return await _context.Caminhoes.FirstOrDefaultAsync(c => c.IdCaminhao == id);
+            await _context.Caminhoes.AddAsync(caminhao);
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<CaminhaoModel>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            return await _context.Caminhoes
+                .OrderBy(r => r.IdCaminhao) // Ordenação para garantir consistência
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+
     }
 }

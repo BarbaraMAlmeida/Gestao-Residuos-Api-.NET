@@ -119,3 +119,4 @@ C:\Users\babin\OneDrive\Área de Trabalho\aulas-net\GestaoResiduosApi\bin\Debug\
 C:\Users\babin\OneDrive\Área de Trabalho\aulas-net\GestaoResiduosApi\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\babin\OneDrive\Área de Trabalho\aulas-net\GestaoResiduosApi\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\babin\OneDrive\Área de Trabalho\aulas-net\GestaoResiduosApi\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\babin\OneDrive\Área de Trabalho\aulas-net\GestaoResiduosApi\obj\Debug\net8.0\GestaoResiduosApi.sourcelink.json
